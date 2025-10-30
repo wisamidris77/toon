@@ -13,12 +13,14 @@ class Toon {
   /// Encodes an object to Toon format.
   ///
   /// Same as [toonEncode] function.
-  static String encode(Object? input, {EncodeOptions? options}) => toonEncode(input, options: options);
+  static String encode(Object? input, {EncodeOptions? options}) =>
+      toonEncode(input, options: options);
 
   /// Decodes a Toon format string to an object.
   ///
   /// Same as [toonDecode] function.
-  static Object? decode(String input, {DecodeOptions? options}) => toonDecode(input, options: options);
+  static Object? decode(String input, {DecodeOptions? options}) =>
+      toonDecode(input, options: options);
 }
 
 /// Encodes an object to Toon format.
@@ -49,10 +51,12 @@ String toonEncode(Object? input, {EncodeOptions? options}) {
 /// ```
 Object? toonDecode(String input, {DecodeOptions? options}) {
   final resolvedOptions = options ?? const DecodeOptions();
-  final scanResult = toParsedLines(input, resolvedOptions.indent, resolvedOptions.strict);
+  final scanResult =
+      toParsedLines(input, resolvedOptions.indent, resolvedOptions.strict);
 
   if (scanResult.lines.isEmpty) {
-    throw FormatException('Cannot decode empty input: input must be a non-empty string');
+    throw FormatException(
+        'Cannot decode empty input: input must be a non-empty string');
   }
 
   final cursor = LineCursor(scanResult.lines, scanResult.blankLines);
@@ -60,7 +64,9 @@ Object? toonDecode(String input, {DecodeOptions? options}) {
 }
 
 /// Convenience function for encoding, same as [toonEncode].
-String encode(Object? input, {EncodeOptions? options}) => toonEncode(input, options: options);
+String encode(Object? input, {EncodeOptions? options}) =>
+    toonEncode(input, options: options);
 
 /// Convenience function for decoding, same as [toonDecode].
-Object? decode(String input, {DecodeOptions? options}) => toonDecode(input, options: options);
+Object? decode(String input, {DecodeOptions? options}) =>
+    toonDecode(input, options: options);

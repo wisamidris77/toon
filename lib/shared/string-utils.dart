@@ -5,11 +5,11 @@ import '../constants.dart';
 /// Handles backslashes, quotes, newlines, carriage returns, and tabs.
 String escapeString(String value) {
   return value
-      .replaceAllMapped(RegExp(r'\\'), (match) => BACKSLASH + BACKSLASH)
-      .replaceAllMapped(RegExp(r'"'), (match) => BACKSLASH + DOUBLE_QUOTE)
-      .replaceAllMapped(RegExp(r'\n'), (match) => BACKSLASH + 'n')
-      .replaceAllMapped(RegExp(r'\r'), (match) => BACKSLASH + 'r')
-      .replaceAllMapped(RegExp(r'\t'), (match) => BACKSLASH + 't');
+      .replaceAllMapped(RegExp(r'\\'), (match) => backslash + backslash)
+      .replaceAllMapped(RegExp(r'"'), (match) => backslash + doubleQuote)
+      .replaceAllMapped(RegExp(r'\n'), (match) => backslash + 'n')
+      .replaceAllMapped(RegExp(r'\r'), (match) => backslash + 'r')
+      .replaceAllMapped(RegExp(r'\t'), (match) => backslash + 't');
 }
 
 /// Unescapes a string by processing escape sequences.
@@ -20,31 +20,32 @@ String unescapeString(String value) {
   int i = 0;
 
   while (i < value.length) {
-    if (value[i] == BACKSLASH) {
+    if (value[i] == backslash) {
       if (i + 1 >= value.length) {
-        throw FormatException('Invalid escape sequence: backslash at end of string');
+        throw FormatException(
+            'Invalid escape sequence: backslash at end of string');
       }
 
       final String next = value[i + 1];
       switch (next) {
         case 'n':
-          result.write(NEWLINE);
+          result.write(newLine);
           i += 2;
           continue;
         case 't':
-          result.write(TAB);
+          result.write(tab);
           i += 2;
           continue;
         case 'r':
-          result.write(CARRIAGE_RETURN);
+          result.write(carriageReturn);
           i += 2;
           continue;
-        case BACKSLASH:
-          result.write(BACKSLASH);
+        case backslash:
+          result.write(backslash);
           i += 2;
           continue;
-        case DOUBLE_QUOTE:
-          result.write(DOUBLE_QUOTE);
+        case doubleQuote:
+          result.write(doubleQuote);
           i += 2;
           continue;
         default:
@@ -67,12 +68,12 @@ String unescapeString(String value) {
 int findClosingQuote(String content, int start) {
   int i = start + 1;
   while (i < content.length) {
-    if (content[i] == BACKSLASH && i + 1 < content.length) {
+    if (content[i] == backslash && i + 1 < content.length) {
       // Skip escaped character
       i += 2;
       continue;
     }
-    if (content[i] == DOUBLE_QUOTE) {
+    if (content[i] == doubleQuote) {
       return i;
     }
     i++;
@@ -91,13 +92,13 @@ int findUnquotedChar(String content, String char, [int start = 0]) {
   int i = start;
 
   while (i < content.length) {
-    if (content[i] == BACKSLASH && i + 1 < content.length && inQuotes) {
+    if (content[i] == backslash && i + 1 < content.length && inQuotes) {
       // Skip escaped character
       i += 2;
       continue;
     }
 
-    if (content[i] == DOUBLE_QUOTE) {
+    if (content[i] == doubleQuote) {
       inQuotes = !inQuotes;
       i++;
       continue;

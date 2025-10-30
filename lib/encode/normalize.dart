@@ -24,7 +24,8 @@ Object? normalizeValue(Object? value) {
   // BigInt → number (if safe) or string
   if (value is BigInt) {
     // Try to convert to number if within safe integer range
-    if (value >= BigInt.from(-9007199254740991) && value <= BigInt.from(9007199254740991)) {
+    if (value >= BigInt.from(-9007199254740991) &&
+        value <= BigInt.from(9007199254740991)) {
       return value.toInt();
     }
     // Otherwise convert to string (will be unquoted as it looks numeric)
@@ -64,10 +65,6 @@ Object? normalizeValue(Object? value) {
   return null;
 }
 
-// #endregion
-
-// #region Type guards
-
 /// Checks if a value is a JSON primitive
 bool isJsonPrimitive(Object? value) {
   return value == null || value is String || value is num || value is bool;
@@ -83,11 +80,6 @@ bool isJsonObject(Object? value) {
   return value != null && value is Map<String, Object?>;
 }
 
-
-// #endregion
-
-// #region Array type detection
-
 /// Checks if an array contains only primitives
 bool isArrayOfPrimitives(List<Object?> value) {
   return value.every(isJsonPrimitive);
@@ -102,5 +94,3 @@ bool isArrayOfArrays(List<Object?> value) {
 bool isArrayOfObjects(List<Object?> value) {
   return value.every(isJsonObject);
 }
-
-// #endregion

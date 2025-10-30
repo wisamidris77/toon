@@ -3,22 +3,21 @@ import '../shared/literal-utils.dart';
 import '../shared/string-utils.dart';
 import '../types.dart';
 
-// #region Array header parsing
-
 /// Parses an array header line
-({ArrayHeaderInfo header, String? inlineValues})? parseArrayHeaderLine(String content, String defaultDelimiter) {
+({ArrayHeaderInfo header, String? inlineValues})? parseArrayHeaderLine(
+    String content, String defaultDelimiter) {
   // Don't match if the line starts with a quote (it's a quoted key, not an array)
-  if (content.trim().startsWith(DOUBLE_QUOTE)) {
+  if (content.trim().startsWith(doubleQuote)) {
     return null;
   }
 
   // Find the bracket segment first
-  final bracketStart = content.indexOf(OPEN_BRACKET);
+  final bracketStart = content.indexOf(openBracket);
   if (bracketStart == -1) {
     return null;
   }
 
-  final bracketEnd = content.indexOf(CLOSE_BRACKET, bracketStart);
+  final bracketEnd = content.indexOf(closeBracket, bracketStart);
   if (bracketEnd == -1) {
     return null;
   }
@@ -28,16 +27,16 @@ import '../types.dart';
   int braceEnd = colonIndex;
 
   // Check for fields segment (braces come after bracket)
-  final braceStart = content.indexOf(OPEN_BRACE, bracketEnd);
-  if (braceStart != -1 && braceStart < content.indexOf(COLON, bracketEnd)) {
-    final foundBraceEnd = content.indexOf(CLOSE_BRACE, braceStart);
+  final braceStart = content.indexOf(openBrace, bracketEnd);
+  if (braceStart != -1 && braceStart < content.indexOf(colon, bracketEnd)) {
+    final foundBraceEnd = content.indexOf(closeBrace, braceStart);
     if (foundBraceEnd != -1) {
       braceEnd = foundBraceEnd + 1;
     }
   }
 
   // Now find colon after brackets and braces
-  colonIndex = content.indexOf(COLON, braceEnd.clamp(0, content.length));
+  colonIndex = content.indexOf(colon, braceEnd.clamp(0, content.length));
   if (colonIndex == -1) {
     return null;
   }
@@ -57,10 +56,12 @@ import '../types.dart';
   // Check for fields segment
   List<String>? fields;
   if (braceStart != -1 && braceStart < colonIndex) {
-    final foundBraceEnd = content.indexOf(CLOSE_BRACE, braceStart);
+    final foundBraceEnd = content.indexOf(closeBrace, braceStart);
     if (foundBraceEnd != -1 && foundBraceEnd < colonIndex) {
       final fieldsContent = content.substring(braceStart + 1, foundBraceEnd);
-      fields = parseDelimitedValues(fieldsContent, delimiter).map(_parseStringLiteral).toList();
+      fields = parseDelimitedValues(fieldsContent, delimiter)
+          .map(_parseStringLiteral)
+          .toList();
     }
   }
 
@@ -77,23 +78,24 @@ import '../types.dart';
 }
 
 /// Parses a bracket segment like "[#N,t]" or "[3]"
-({int length, String delimiter, bool hasLengthMarker}) _parseBracketSegment(String seg, String defaultDelimiter) {
+({int length, String delimiter, bool hasLengthMarker}) _parseBracketSegment(
+    String seg, String defaultDelimiter) {
   bool hasLengthMarker = false;
   String content = seg;
 
   // Check for length marker
-  if (content.startsWith(HASH)) {
+  if (content.startsWith(hash)) {
     hasLengthMarker = true;
     content = content.substring(1);
   }
 
   // Check for delimiter suffix
   String delimiter = defaultDelimiter;
-  if (content.endsWith(TAB)) {
-    delimiter = DELIMITERS['tab']!;
+  if (content.endsWith(tab)) {
+    delimiter = delimiters['tab']!;
     content = content.substring(0, content.length - 1);
-  } else if (content.endsWith(PIPE)) {
-    delimiter = DELIMITERS['pipe']!;
+  } else if (content.endsWith(pipe)) {
+    delimiter = delimiters['pipe']!;
     content = content.substring(0, content.length - 1);
   }
 
@@ -102,12 +104,12 @@ import '../types.dart';
     throw FormatException('Invalid array length: $seg');
   }
 
-  return (length: length, delimiter: delimiter, hasLengthMarker: hasLengthMarker);
+  return (
+    length: length,
+    delimiter: delimiter,
+    hasLengthMarker: hasLengthMarker
+  );
 }
-
-// #endregion
-
-// #region Delimited value parsing
 
 /// Parses comma/tab/pipe separated values
 List<String> parseDelimitedValues(String input, String delimiter) {
@@ -119,14 +121,14 @@ List<String> parseDelimitedValues(String input, String delimiter) {
   while (i < input.length) {
     final char = input[i];
 
-    if (char == BACKSLASH && i + 1 < input.length && inQuotes) {
+    if (char == backslash && i + 1 < input.length && inQuotes) {
       // Escape sequence in quoted string
       current += char + input[i + 1];
       i += 2;
       continue;
     }
 
-    if (char == DOUBLE_QUOTE) {
+    if (char == doubleQuote) {
       inQuotes = !inQuotes;
       current += char;
       i++;
@@ -157,10 +159,6 @@ List<Object?> mapRowValuesToPrimitives(List<String> values) {
   return values.map(parsePrimitiveToken).toList();
 }
 
-// #endregion
-
-// #region Primitive and key parsing
-
 /// Parses a primitive token
 Object? parsePrimitiveToken(String token) {
   final trimmed = token.trim();
@@ -171,15 +169,15 @@ Object? parsePrimitiveToken(String token) {
   }
 
   // Quoted string (if starts with quote, it MUST be properly quoted)
-  if (trimmed.startsWith(DOUBLE_QUOTE)) {
+  if (trimmed.startsWith(doubleQuote)) {
     return _parseStringLiteral(trimmed);
   }
 
   // Boolean or null literals
   if (isBooleanOrNullLiteral(trimmed)) {
-    if (trimmed == TRUE_LITERAL) return true;
-    if (trimmed == FALSE_LITERAL) return false;
-    if (trimmed == NULL_LITERAL) return null;
+    if (trimmed == trueLiteral) return true;
+    if (trimmed == falseLiteral) return false;
+    if (trimmed == nullLiteral) return null;
   }
 
   // Numeric literal
@@ -195,7 +193,7 @@ Object? parsePrimitiveToken(String token) {
 String _parseStringLiteral(String token) {
   final trimmed = token.trim();
 
-  if (trimmed.startsWith(DOUBLE_QUOTE)) {
+  if (trimmed.startsWith(doubleQuote)) {
     // Find the closing quote, accounting for escaped quotes
     final closingQuoteIndex = findClosingQuote(trimmed, 0);
 
@@ -218,12 +216,12 @@ String _parseStringLiteral(String token) {
 /// Parses an unquoted key
 ({String key, int end}) _parseUnquotedKey(String content, int start) {
   int end = start;
-  while (end < content.length && content[end] != COLON) {
+  while (end < content.length && content[end] != colon) {
     end++;
   }
 
   // Validate that a colon was found
-  if (end >= content.length || content[end] != COLON) {
+  if (end >= content.length || content[end] != colon) {
     throw FormatException('Missing colon after key');
   }
 
@@ -250,7 +248,7 @@ String _parseStringLiteral(String token) {
   int end = closingQuoteIndex + 1;
 
   // Validate and skip colon after quoted key
-  if (end >= content.length || content[end] != COLON) {
+  if (end >= content.length || content[end] != colon) {
     throw FormatException('Missing colon after key');
   }
   end++;
@@ -260,25 +258,20 @@ String _parseStringLiteral(String token) {
 
 /// Parses a key token (quoted or unquoted)
 ({String key, int end}) parseKeyToken(String content, int start) {
-  if (content[start] == DOUBLE_QUOTE) {
+  if (content[start] == doubleQuote) {
     return _parseQuotedKey(content, start);
   } else {
     return _parseUnquotedKey(content, start);
   }
 }
 
-// #endregion
-
-// #region Array content detection helpers
-
 /// Checks if content represents an array header after a hyphen
 bool isArrayHeaderAfterHyphen(String content) {
-  return content.trim().startsWith(OPEN_BRACKET) && findUnquotedChar(content, COLON) != -1;
+  return content.trim().startsWith(openBracket) &&
+      findUnquotedChar(content, colon) != -1;
 }
 
 /// Checks if content represents an object first field after a hyphen
 bool isObjectFirstFieldAfterHyphen(String content) {
-  return findUnquotedChar(content, COLON) != -1;
+  return findUnquotedChar(content, colon) != -1;
 }
-
-// #endregion

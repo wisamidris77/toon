@@ -86,8 +86,10 @@ void main() {
     test('quotes string values with special characters', () {
       expect(toonEncode({'note': 'a:b'}), equals('note: "a:b"'));
       expect(toonEncode({'note': 'a,b'}), equals('note: "a,b"'));
-      expect(toonEncode({'text': 'line1\nline2'}), equals('text: "line1\\nline2"'));
-      expect(toonEncode({'text': 'say "hello"'}), equals('text: "say \\"hello\\""'));
+      expect(toonEncode({'text': 'line1\nline2'}),
+          equals('text: "line1\\nline2"'));
+      expect(toonEncode({'text': 'say "hello"'}),
+          equals('text: "say \\"hello\\""'));
     });
 
     test('quotes string values with leading/trailing spaces', () {
@@ -119,11 +121,7 @@ void main() {
   group('objects (nested)', () {
     test('encodes nested objects', () {
       final obj = {
-        'user': {
-          'name': 'Alice',
-          'age': 30,
-          'active': true
-        }
+        'user': {'name': 'Alice', 'age': 30, 'active': true}
       };
       const expected = 'user:\n  name: Alice\n  age: 30\n  active: true';
       expect(toonEncode(obj), equals(expected));
@@ -133,9 +131,7 @@ void main() {
       final obj = {
         'a': {
           'b': {
-            'c': {
-              'd': 42
-            }
+            'c': {'d': 42}
           }
         }
       };
@@ -146,23 +142,33 @@ void main() {
     test('encodes mixed nested structures', () {
       final obj = {
         'config': {
-          'database': {
-            'host': 'localhost',
-            'port': 5432
-          },
+          'database': {'host': 'localhost', 'port': 5432},
           'features': ['logging', 'auth']
         }
       };
-      const expected = 'config:\n  database:\n    host: localhost\n    port: 5432\n  features[2]: logging,auth';
+      const expected =
+          'config:\n  database:\n    host: localhost\n    port: 5432\n  features[2]: logging,auth';
       expect(toonEncode(obj), equals(expected));
     });
   });
 
   group('arrays (primitive)', () {
     test('encodes primitive arrays inline', () {
-      expect(toonEncode({'nums': [1, 2, 3]}), equals('nums[3]: 1,2,3'));
-      expect(toonEncode({'flags': [true, false]}), equals('flags[2]: true,false'));
-      expect(toonEncode({'data': ['hello', 'world', 'test']}), equals('data[3]: hello,world,test'));
+      expect(
+          toonEncode({
+            'nums': [1, 2, 3]
+          }),
+          equals('nums[3]: 1,2,3'));
+      expect(
+          toonEncode({
+            'flags': [true, false]
+          }),
+          equals('flags[2]: true,false'));
+      expect(
+          toonEncode({
+            'data': ['hello', 'world', 'test']
+          }),
+          equals('data[3]: hello,world,test'));
     });
 
     test('encodes empty arrays', () {
@@ -171,7 +177,11 @@ void main() {
 
     test('encodes arrays with length marker', () {
       final options = EncodeOptions(lengthMarker: '#');
-      expect(toonEncode({'nums': [1, 2, 3]}, options: options), equals('nums[#3]: 1,2,3'));
+      expect(
+          toonEncode({
+            'nums': [1, 2, 3]
+          }, options: options),
+          equals('nums[#3]: 1,2,3'));
     });
   });
 
@@ -194,7 +204,8 @@ void main() {
           {'name': 'Bob', 'count': 17, 'active': false}
         ]
       };
-      const expected = 'data[2]{name,count,active}:\n  Alice,42,true\n  Bob,17,false';
+      const expected =
+          'data[2]{name,count,active}:\n  Alice,42,true\n  Bob,17,false';
       expect(toonEncode(obj), equals(expected));
     });
 
@@ -205,7 +216,8 @@ void main() {
           {'name': 'Item 2', 'desc': 'Normal item'}
         ]
       };
-      const expected = 'items[2]{name,desc}:\n  Item 1,"A \\"special\\" item"\n  Item 2,Normal item';
+      const expected =
+          'items[2]{name,desc}:\n  Item 1,"A \\"special\\" item"\n  Item 2,Normal item';
       expect(toonEncode(obj), equals(expected));
     });
   });
@@ -216,10 +228,13 @@ void main() {
         'items': [
           'hello',
           {'count': 42},
-          {'nested': {'value': true}}
+          {
+            'nested': {'value': true}
+          }
         ]
       };
-      const expected = 'items[3]:\n  - hello\n  - count: 42\n  - nested:\n      value: true';
+      const expected =
+          'items[3]:\n  - hello\n  - count: 42\n  - nested:\n      value: true';
       expect(toonEncode(obj), equals(expected));
     });
 
@@ -230,7 +245,8 @@ void main() {
           {'name': 'Bob', 'email': 'bob@example.com'}
         ]
       };
-      const expected = 'users[2]:\n  - name: Alice\n    age: 30\n  - name: Bob\n    email: bob@example.com';
+      const expected =
+          'users[2]:\n  - name: Alice\n    age: 30\n  - name: Bob\n    email: bob@example.com';
       expect(toonEncode(obj), equals(expected));
     });
   });
@@ -257,12 +273,20 @@ void main() {
   group('delimiters', () {
     test('uses tab delimiter when specified', () {
       final options = EncodeOptions(delimiter: '\t');
-      expect(toonEncode({'data': ['a', 'b', 'c']}, options: options), equals('data[3\t]: a\tb\tc'));
+      expect(
+          toonEncode({
+            'data': ['a', 'b', 'c']
+          }, options: options),
+          equals('data[3\t]: a\tb\tc'));
     });
 
     test('uses pipe delimiter when specified', () {
       final options = EncodeOptions(delimiter: '|');
-      expect(toonEncode({'data': ['a', 'b', 'c']}, options: options), equals('data[3|]: a|b|c'));
+      expect(
+          toonEncode({
+            'data': ['a', 'b', 'c']
+          }, options: options),
+          equals('data[3|]: a|b|c'));
     });
   });
 
@@ -271,9 +295,7 @@ void main() {
       final obj = {
         'user': {
           'name': 'Alice',
-          'profile': {
-            'age': 30
-          }
+          'profile': {'age': 30}
         }
       };
       final options = EncodeOptions(indent: 4);
@@ -286,22 +308,24 @@ void main() {
     test('encodes complex nested structure', () {
       final obj = {
         'config': {
-          'app': {
-            'name': 'MyApp',
-            'version': '1.0.0'
-          },
+          'app': {'name': 'MyApp', 'version': '1.0.0'},
           'database': {
             'host': 'localhost',
             'port': 5432,
-            'credentials': {
-              'username': 'admin',
-              'password': 'secret'
-            }
+            'credentials': {'username': 'admin', 'password': 'secret'}
           },
           'features': ['auth', 'logging', 'cache'],
           'users': [
-            {'name': 'Alice', 'email': 'alice@example.com', 'roles': ['admin', 'user']},
-            {'name': 'Bob', 'email': 'bob@example.com', 'roles': ['user']}
+            {
+              'name': 'Alice',
+              'email': 'alice@example.com',
+              'roles': ['admin', 'user']
+            },
+            {
+              'name': 'Bob',
+              'email': 'bob@example.com',
+              'roles': ['user']
+            }
           ]
         }
       };

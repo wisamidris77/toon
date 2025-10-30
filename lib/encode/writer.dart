@@ -15,7 +15,7 @@ class LineWriter {
 
   /// Adds a list item line at the specified depth
   void pushListItem(int depth, String content) {
-    push(depth, '${LIST_ITEM_PREFIX}$content');
+    push(depth, '${listItemPrefix}$content');
   }
 
   /// Returns the complete formatted text

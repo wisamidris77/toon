@@ -9,7 +9,8 @@ import 'scanner.dart';
 /// @param itemType The type of items being counted (e.g., `list array items`, `tabular rows`)
 /// @param options Decode options
 /// @throws RangeError if counts don't match in strict mode
-void assertExpectedCount(int actual, int expected, String itemType, ResolvedDecodeOptions options) {
+void assertExpectedCount(
+    int actual, int expected, String itemType, ResolvedDecodeOptions options) {
   if (options.strict && actual != expected) {
     throw RangeError('Expected $expected $itemType, but got $actual');
   }
@@ -21,14 +22,18 @@ void assertExpectedCount(int actual, int expected, String itemType, ResolvedDeco
 /// @param itemDepth The expected depth of items
 /// @param expectedCount The expected number of items
 /// @throws RangeError if extra items are found
-void validateNoExtraListItems(LineCursor cursor, int itemDepth, int expectedCount) {
+void validateNoExtraListItems(
+    LineCursor cursor, int itemDepth, int expectedCount) {
   if (cursor.atEnd()) {
     return;
   }
 
   final nextLine = cursor.peek();
-  if (nextLine != null && nextLine.depth == itemDepth && nextLine.content.startsWith(LIST_ITEM_PREFIX)) {
-    throw RangeError('Expected $expectedCount list array items, but found more');
+  if (nextLine != null &&
+      nextLine.depth == itemDepth &&
+      nextLine.content.startsWith(listItemPrefix)) {
+    throw RangeError(
+        'Expected $expectedCount list array items, but found more');
   }
 }
 
@@ -38,7 +43,8 @@ void validateNoExtraListItems(LineCursor cursor, int itemDepth, int expectedCoun
 /// @param rowDepth The expected depth of rows
 /// @param header The array header info containing length and delimiter
 /// @throws RangeError if extra rows are found
-void validateNoExtraTabularRows(LineCursor cursor, int rowDepth, ArrayHeaderInfo header) {
+void validateNoExtraTabularRows(
+    LineCursor cursor, int rowDepth, ArrayHeaderInfo header) {
   if (cursor.atEnd()) {
     return;
   }
@@ -46,7 +52,7 @@ void validateNoExtraTabularRows(LineCursor cursor, int rowDepth, ArrayHeaderInfo
   final nextLine = cursor.peek();
   if (nextLine != null &&
       nextLine.depth == rowDepth &&
-      !nextLine.content.startsWith(LIST_ITEM_PREFIX) &&
+      !nextLine.content.startsWith(listItemPrefix) &&
       _isDataRow(nextLine.content, header.delimiter)) {
     throw RangeError('Expected ${header.length} tabular rows, but found more');
   }
@@ -93,7 +99,7 @@ void validateNoBlankLinesInRange(
 /// @param delimiter The delimiter used in the table
 /// @returns true if the line is a data row, false if it's a key-value pair
 bool _isDataRow(String content, String delimiter) {
-  final colonPos = content.indexOf(COLON);
+  final colonPos = content.indexOf(colon);
   final delimiterPos = content.indexOf(delimiter);
 
   // No colon = definitely a data row

@@ -35,12 +35,12 @@ bool isSafeUnquoted(String value, String delimiter) {
   }
 
   // Check for colon (always structural)
-  if (value.contains(COLON)) {
+  if (value.contains(colon)) {
     return false;
   }
 
   // Check for quotes and backslash (always need escaping)
-  if (value.contains(DOUBLE_QUOTE) || value.contains(BACKSLASH)) {
+  if (value.contains(doubleQuote) || value.contains(backslash)) {
     return false;
   }
 
@@ -60,7 +60,7 @@ bool isSafeUnquoted(String value, String delimiter) {
   }
 
   // Check for hyphen at start (list marker)
-  if (value.startsWith(LIST_ITEM_MARKER)) {
+  if (value.startsWith(listItemMarker)) {
     return false;
   }
 
@@ -71,6 +71,7 @@ bool isSafeUnquoted(String value, String delimiter) {
 ///
 /// Match numbers like `42`, `-3.14`, `1e-6`, `05`, etc.
 bool _isNumericLike(String value) {
-  return RegExp(r'^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$', caseSensitive: false).hasMatch(value) ||
-         RegExp(r'^0\d+$').hasMatch(value);
+  return RegExp(r'^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$', caseSensitive: false)
+          .hasMatch(value) ||
+      RegExp(r'^0\d+$').hasMatch(value);
 }

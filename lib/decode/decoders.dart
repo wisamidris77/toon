@@ -5,8 +5,6 @@ import 'parser.dart';
 import 'scanner.dart';
 import 'validation.dart';
 
-// #region Entry decoding
-
 /// Decodes a Toon-formatted string to JsonValue
 Object? decodeValueFromLines(LineCursor cursor, ResolvedDecodeOptions options) {
   final first = cursor.peek();
@@ -16,10 +14,11 @@ Object? decodeValueFromLines(LineCursor cursor, ResolvedDecodeOptions options) {
 
   // Check for root array
   if (isArrayHeaderAfterHyphen(first.content)) {
-    final headerInfo = parseArrayHeaderLine(first.content, DEFAULT_DELIMITER);
+    final headerInfo = parseArrayHeaderLine(first.content, defaultDelimiters);
     if (headerInfo != null) {
       cursor.advance(); // Move past the header line
-      return decodeArrayFromHeader(headerInfo.header, headerInfo.inlineValues, cursor, 0, options);
+      return decodeArrayFromHeader(
+          headerInfo.header, headerInfo.inlineValues, cursor, 0, options);
     }
   }
 
@@ -35,26 +34,24 @@ Object? decodeValueFromLines(LineCursor cursor, ResolvedDecodeOptions options) {
 bool _isKeyValueLine(ParsedLine line) {
   final content = line.content;
   // Look for unquoted colon or quoted key followed by colon
-  if (content.startsWith(DOUBLE_QUOTE)) {
+  if (content.startsWith(doubleQuote)) {
     // Quoted key - find the closing quote
     final closingQuoteIndex = findClosingQuote(content, 0);
     if (closingQuoteIndex == -1) {
       return false;
     }
     // Check if there's a colon after the quoted key
-    return closingQuoteIndex + 1 < content.length && content[closingQuoteIndex + 1] == COLON;
+    return closingQuoteIndex + 1 < content.length &&
+        content[closingQuoteIndex + 1] == colon;
   } else {
     // Unquoted key - look for first colon not inside quotes
-    return content.contains(COLON);
+    return content.contains(colon);
   }
 }
 
-// #endregion
-
-// #region Object decoding
-
 /// Decodes an object from the cursor
-Map<String, Object?> decodeObject(LineCursor cursor, int baseDepth, ResolvedDecodeOptions options) {
+Map<String, Object?> decodeObject(
+    LineCursor cursor, int baseDepth, ResolvedDecodeOptions options) {
   final obj = <String, Object?>{};
 
   while (!cursor.atEnd()) {
@@ -82,11 +79,16 @@ Map<String, Object?> decodeObject(LineCursor cursor, int baseDepth, ResolvedDeco
   ResolvedDecodeOptions options,
 ) {
   // Check for array header first (before parsing key)
-  final arrayHeader = parseArrayHeaderLine(content, DEFAULT_DELIMITER);
+  final arrayHeader = parseArrayHeaderLine(content, defaultDelimiters);
   if (arrayHeader != null && arrayHeader.header.key != null) {
-    final value = decodeArrayFromHeader(arrayHeader.header, arrayHeader.inlineValues, cursor, baseDepth, options);
+    final value = decodeArrayFromHeader(arrayHeader.header,
+        arrayHeader.inlineValues, cursor, baseDepth, options);
     // After an array, subsequent fields are at baseDepth + 1 (where array content is)
-    return (key: arrayHeader.header.key!, value: value, followDepth: baseDepth + 1);
+    return (
+      key: arrayHeader.header.key!,
+      value: value,
+      followDepth: baseDepth + 1
+    );
   }
 
   // Regular key-value pair
@@ -101,7 +103,11 @@ Map<String, Object?> decodeObject(LineCursor cursor, int baseDepth, ResolvedDeco
       return (key: keyToken.key, value: nested, followDepth: baseDepth + 1);
     }
     // Empty object
-    return (key: keyToken.key, value: <String, Object?>{}, followDepth: baseDepth + 1);
+    return (
+      key: keyToken.key,
+      value: <String, Object?>{},
+      followDepth: baseDepth + 1
+    );
   }
 
   // Inline primitive value
@@ -120,10 +126,6 @@ Map<String, Object?> decodeObject(LineCursor cursor, int baseDepth, ResolvedDeco
   final kv = _decodeKeyValue(line.content, cursor, baseDepth, options);
   return (kv.key, kv.value);
 }
-
-// #endregion
-
-// #region Array decoding
 
 /// Decodes an array from header information
 List<Object?> decodeArrayFromHeader(
@@ -165,7 +167,8 @@ List<Object?> decodeInlinePrimitiveArray(
   final values = parseDelimitedValues(inlineValues, header.delimiter);
   final primitives = mapRowValuesToPrimitives(values);
 
-  assertExpectedCount(primitives.length, header.length, 'inline array items', options);
+  assertExpectedCount(
+      primitives.length, header.length, 'inline array items', options);
 
   return primitives;
 }
@@ -190,7 +193,7 @@ List<Object?> decodeListArray(
       break;
     }
 
-    if (line.depth == itemDepth && line.content.startsWith(LIST_ITEM_PREFIX)) {
+    if (line.depth == itemDepth && line.content.startsWith(listItemPrefix)) {
       // Track first and last item line numbers
       if (startLine == null) {
         startLine = line.lineNumber;
@@ -260,7 +263,8 @@ List<Map<String, Object?>> decodeTabularArray(
 
       cursor.advance();
       final values = parseDelimitedValues(line.content, header.delimiter);
-      assertExpectedCount(values.length, header.fields!.length, 'tabular row values', options);
+      assertExpectedCount(
+          values.length, header.fields!.length, 'tabular row values', options);
 
       final primitives = mapRowValuesToPrimitives(values);
       final obj = <String, Object?>{};
@@ -296,10 +300,6 @@ List<Map<String, Object?>> decodeTabularArray(
   return objects;
 }
 
-// #endregion
-
-// #region List item decoding
-
 /// Decodes a list item
 Object? decodeListItem(
   LineCursor cursor,
@@ -312,13 +312,14 @@ Object? decodeListItem(
     throw StateError('Expected list item');
   }
 
-  final afterHyphen = line.content.substring(LIST_ITEM_PREFIX.length);
+  final afterHyphen = line.content.substring(listItemPrefix.length);
 
   // Check for array header after hyphen
   if (isArrayHeaderAfterHyphen(afterHyphen)) {
-    final arrayHeader = parseArrayHeaderLine(afterHyphen, DEFAULT_DELIMITER);
+    final arrayHeader = parseArrayHeaderLine(afterHyphen, defaultDelimiters);
     if (arrayHeader != null) {
-      return decodeArrayFromHeader(arrayHeader.header, arrayHeader.inlineValues, cursor, baseDepth, options);
+      return decodeArrayFromHeader(arrayHeader.header, arrayHeader.inlineValues,
+          cursor, baseDepth, options);
     }
   }
 
@@ -338,7 +339,7 @@ Map<String, Object?> decodeObjectFromListItem(
   int baseDepth,
   ResolvedDecodeOptions options,
 ) {
-  final afterHyphen = firstLine.content.substring(LIST_ITEM_PREFIX.length);
+  final afterHyphen = firstLine.content.substring(listItemPrefix.length);
   final kv = _decodeKeyValue(afterHyphen, cursor, baseDepth, options);
 
   final obj = <String, Object?>{kv.key: kv.value};
@@ -350,7 +351,8 @@ Map<String, Object?> decodeObjectFromListItem(
       break;
     }
 
-    if (line.depth == kv.followDepth && !line.content.startsWith(LIST_ITEM_PREFIX)) {
+    if (line.depth == kv.followDepth &&
+        !line.content.startsWith(listItemPrefix)) {
       final (k, v) = decodeKeyValuePair(line, cursor, kv.followDepth, options);
       obj[k] = v;
     } else {
@@ -360,5 +362,3 @@ Map<String, Object?> decodeObjectFromListItem(
 
   return obj;
 }
-
-// #endregion

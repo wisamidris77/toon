@@ -12,10 +12,6 @@ typedef JsonArray = List<Object?>;
 /// Represents any valid JSON value
 typedef JsonValue = Object?; // JsonPrimitive | JsonObject | JsonArray
 
-// #endregion
-
-// #region Encoder options
-
 /// Represents delimiter keys
 typedef DelimiterKey = String;
 
@@ -41,15 +37,11 @@ class EncodeOptions {
     this.indent = 2,
     Delimiter? delimiter,
     this.lengthMarker,
-  }) : delimiter = delimiter ?? constants.COMMA;
+  }) : delimiter = delimiter ?? constants.comma;
 }
 
 /// Resolved encode options with all defaults applied
 typedef ResolvedEncodeOptions = EncodeOptions;
-
-// #endregion
-
-// #region Decoder options
 
 /// Options for decoding Toon format
 class DecodeOptions {
@@ -69,10 +61,6 @@ class DecodeOptions {
 
 /// Resolved decode options with all defaults applied
 typedef ResolvedDecodeOptions = DecodeOptions;
-
-// #endregion
-
-// #region Decoder parsing types
 
 /// Information about an array header
 class ArrayHeaderInfo {
@@ -120,8 +108,6 @@ class BlankLineInfo {
     required this.depth,
   });
 }
-
-// #endregion
 
 /// Represents depth in the parsing tree
 typedef Depth = int;
