@@ -1,6 +1,6 @@
 import '../constants.dart';
 import '../types.dart';
-import '../shared/string-utils.dart';
+import '../shared/string_utils.dart';
 import 'parser.dart';
 import 'scanner.dart';
 import 'validation.dart';
@@ -195,9 +195,7 @@ List<Object?> decodeListArray(
 
     if (line.depth == itemDepth && line.content.startsWith(listItemPrefix)) {
       // Track first and last item line numbers
-      if (startLine == null) {
-        startLine = line.lineNumber;
-      }
+      startLine ??= line.lineNumber;
       endLine = line.lineNumber;
 
       final item = decodeListItem(cursor, itemDepth, header.delimiter, options);
@@ -256,9 +254,7 @@ List<Map<String, Object?>> decodeTabularArray(
 
     if (line.depth == rowDepth) {
       // Track first and last row line numbers
-      if (startLine == null) {
-        startLine = line.lineNumber;
-      }
+      startLine ??= line.lineNumber;
       endLine = line.lineNumber;
 
       cursor.advance();

@@ -7,9 +7,9 @@ String escapeString(String value) {
   return value
       .replaceAllMapped(RegExp(r'\\'), (match) => backslash + backslash)
       .replaceAllMapped(RegExp(r'"'), (match) => backslash + doubleQuote)
-      .replaceAllMapped(RegExp(r'\n'), (match) => backslash + 'n')
-      .replaceAllMapped(RegExp(r'\r'), (match) => backslash + 'r')
-      .replaceAllMapped(RegExp(r'\t'), (match) => backslash + 't');
+      .replaceAllMapped(RegExp(r'\n'), (match) => '${backslash}n')
+      .replaceAllMapped(RegExp(r'\r'), (match) => '${backslash}r')
+      .replaceAllMapped(RegExp(r'\t'), (match) => '${backslash}t');
 }
 
 /// Unescapes a string by processing escape sequences.

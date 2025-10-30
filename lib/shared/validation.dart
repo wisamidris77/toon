@@ -1,5 +1,5 @@
 import '../constants.dart';
-import 'literal-utils.dart';
+import 'literal_utils.dart';
 
 /// Checks if a key can be used without quotes.
 ///

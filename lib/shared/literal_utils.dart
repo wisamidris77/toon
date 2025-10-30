@@ -2,9 +2,7 @@ import '../constants.dart';
 
 /// Checks if a token is a boolean or null literal (`true`, `false`, `null`).
 bool isBooleanOrNullLiteral(String token) {
-  return token == trueLiteral ||
-      token == falseLiteral ||
-      token == nullLiteral;
+  return token == trueLiteral || token == falseLiteral || token == nullLiteral;
 }
 
 /// Checks if a token represents a valid numeric literal.

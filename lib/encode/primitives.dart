@@ -1,5 +1,5 @@
 import '../constants.dart';
-import '../shared/string-utils.dart';
+import '../shared/string_utils.dart';
 import '../shared/validation.dart';
 
 /// Encodes a primitive value to its string representation
@@ -34,7 +34,7 @@ String encodeStringLiteral(String value, String delimiter) {
     return value;
   }
 
-  return '${doubleQuote}${escapeString(value)}${doubleQuote}';
+  return '$doubleQuote${escapeString(value)}$doubleQuote';
 }
 
 /// Encodes an object key, quoting if necessary
@@ -43,7 +43,7 @@ String encodeKey(String key) {
     return key;
   }
 
-  return '${doubleQuote}${escapeString(key)}${doubleQuote}';
+  return '$doubleQuote${escapeString(key)}$doubleQuote';
 }
 
 /// Joins primitive values with a delimiter
@@ -70,7 +70,7 @@ String formatHeader(
 
   // Only include delimiter if it's not the default (comma)
   header +=
-      '[${actualLengthMarker}${length}${actualDelimiter != defaultDelimiters ? actualDelimiter : ''}]';
+      '[$actualLengthMarker$length${actualDelimiter != defaultDelimiters ? actualDelimiter : ''}]';
 
   if (fields != null) {
     final quotedFields = fields.map(encodeKey);

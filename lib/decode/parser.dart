@@ -1,6 +1,6 @@
 import '../constants.dart';
-import '../shared/literal-utils.dart';
-import '../shared/string-utils.dart';
+import '../shared/literal_utils.dart';
+import '../shared/string_utils.dart';
 import '../types.dart';
 
 /// Parses an array header line
