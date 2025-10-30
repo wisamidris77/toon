@@ -1,7 +1,7 @@
 name: toon_dart
 description: A compact, human-readable data serialization format similar to JSON but designed for configuration files and structured data.
-version: 1.0.0
-repository: https://github.com/google/toon_dart
+version: 1.0.0+3
+repository: https://github.com/wisamidris77/toon_dart
 
 environment:
   sdk: ^3.0.0

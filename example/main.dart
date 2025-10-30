@@ -1,9 +1,8 @@
 import 'package:toon_dart/toon_dart.dart';
 
 void main() {
-  final toon = Toon();
-  final encoded = toon.encode({'hello': 'world'});
+  final encoded = toonEncode({'hello': 'world'});
   print('Encoded: $encoded');
-  final decoded = toon.decode(encoded);
+  final decoded = toonDecode(encoded);
   print('Decoded: $decoded');
 }
