@@ -1,0 +1,20 @@
+name: toon
+description: A compact, human-readable data serialization format similar to JSON but designed for configuration files and structured data.
+version: 1.0.0
+homepage: https://github.com/wisamidris77/toon
+repository: https://github.com/wisamidris77/toon
+issue_tracker: https://github.com/wisamidris77/toon/issues
+documentation: https://github.com/wisamidris77/toon#readme
+
+environment:
+  sdk: ^3.0.0
+
+topics:
+  - serialization
+  - configuration
+  - data-format
+  - human-readable
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
