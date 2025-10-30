@@ -464,7 +464,7 @@ dart run toon data.toon    # .toon → decode to JSON
 ## Quick Start
 
 ```dart
-import 'package:toon/toon.dart';
+import 'package:toon_dart/toon_dart.dart';
 
 void main() {
   final data = {
@@ -712,7 +712,7 @@ A TOON-formatted string with no trailing newline or spaces.
 **Example:**
 
 ```dart
-import 'package:toon/toon.dart';
+import 'package:toon_dart/toon_dart.dart';
 
 final items = [
   {'sku': 'A1', 'qty': 2, 'price': 9.99},
@@ -829,7 +829,7 @@ A Dart value (object, array, or primitive) representing the parsed TOON data.
 **Example:**
 
 ```dart
-import 'package:toon/toon.dart';
+import 'package:toon_dart/toon_dart.dart';
 
 final toon = '''
 items[2]{sku,qty,price}:

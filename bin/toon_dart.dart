@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:toon/toon.dart' as toon;
+import 'package:toon_dart/toon_dart.dart' as toon;
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {

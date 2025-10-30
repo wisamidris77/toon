@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:toon/toon.dart';
+import 'package:toon_dart/toon_dart.dart';
 
 void main() {
   group('primitives', () {
